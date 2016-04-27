@@ -4,19 +4,17 @@ require 'rspec/autorun'
 
 RSpec::Matchers.define :update_to do |sell_in, quality|
   match do |item|
-      new_item = update(actual)
-      expect(new_item.sell_in).to eq sell_in
-      expect(new_item.quality).to eq quality
+    new_item = update(actual)
+    expect(new_item.sell_in).to eq sell_in
+    expect(new_item.quality).to eq quality
   end
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     new_item = update(actual)
     "Expected #{actual} to end up with sell_in=#{sell_in} and quality=#{quality}. Got #{new_item}."
   end
 
   def update(item)
-      cloned_item = item.clone
-      GildedRose.new([cloned_item]).update_quality
-      cloned_item
+    item.clone.tap{|i| GildedRose.new([i]).update_quality}
   end
 end
 
@@ -30,6 +28,7 @@ describe GildedRose do
 
     it "decreases the quality of an in-date item by 1" do
       expect(Item.new("foo", 10, 10)).to update_to 9,9
+      expect(Item.new("foo", 1, 10)).to update_to 0,9
     end
 
     it "decreases the quality of an out-of-date item by 2" do
@@ -77,6 +76,11 @@ describe GildedRose do
     it "drops the quality of a backstage pass to 0 beyond its sell by date" do
       expect(Item.new("Backstage passes to a TAFKAL80ETC concert", 0, 10)).to update_to -1,0
       expect(Item.new("Backstage passes to a TAFKAL80ETC concert", -3, 10)).to update_to -4,0
+    end
+
+    it "rapidly decreases the quality of a conjured item" do
+      expect(Item.new("Conjured mana cake", 10, 10)).to update_to 9,8
+      expect(Item.new("Conjured mana cake", 0, 10)).to update_to -1,6
     end
 
   end
