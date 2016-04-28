@@ -4,12 +4,12 @@ module Mechanics
     def self.matches?(item)
       item.name == "Aged Brie"
     end
-    def self.age(item)
-      item.sell_in -= 1
+    def self.priority
+      2
     end
-    def self.degrade(item)
-      item.quality += item.sell_in < 0 ? 2 : 1
-      item.quality = [item.quality, 50].min
+    def degrade
+      self.quality += self.sell_in < 0 ? 2 : 1
+      self.quality = [self.quality, 50].min
     end
   end
 end

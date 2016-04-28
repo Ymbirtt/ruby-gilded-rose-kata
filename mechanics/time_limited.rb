@@ -1,23 +1,23 @@
 module Mechanics
   module TimeLimited
+    def self.priority
+      2
+    end
     def self.matches?(item)
       item.name == "Backstage passes to a TAFKAL80ETC concert"
     end
-    def self.age(item)
-      item.sell_in -= 1
-    end
-    def self.degrade(item)
+    def degrade
       case
-      when item.sell_in < 0
-        item.quality = 0
-      when item.sell_in < 5
-        item.quality += 3
-      when item.sell_in < 10
-        item.quality += 2
+      when self.sell_in < 0
+        self.quality = 0
+      when self.sell_in < 5
+        self.quality += 3
+      when self.sell_in < 10
+        self.quality += 2
       else
-        item.quality += 1
+        self.quality += 1
       end
-      item.quality = [item.quality, 50].min
+      self.quality = [self.quality, 50].min
     end
   end
 end
