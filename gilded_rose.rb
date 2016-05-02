@@ -7,8 +7,7 @@ class GildedRose
 
   def initialize(items)
     @items = items
-    mechanic_files = Dir.glob(File.join('mechanics', '*'))
-    mechanics = mechanic_files.map{|m| m.chomp(File.extname(m)).camelize.constantize}.sort_by(&:priority)
+    mechanics = load_mechanics
     @items.each do |item|
       mechanics.each{|m| item.extend(m) if m.matches?(item)}
     end
@@ -17,6 +16,21 @@ class GildedRose
   def update_quality
     @items.each(&:update)
   end
+
+  private
+  def load_mechanics
+    Dir.glob(File.join('mechanics', '*')).map{|mechanic_file| load_mechanic_from(mechanic_file)}.sort_by(&:priority)
+  end
+
+  def load_mechanic_from(file_name)
+    constant_name = file_name.chomp(File.extname(file_name)).camelize
+    begin
+      constant_name.constantize
+    rescue NameError
+      raise LoadError, "Expected #{file_name} to define #{constant_name}"
+    end
+  end
+
 end
 
 class Item
