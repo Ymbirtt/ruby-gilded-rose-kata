@@ -7,9 +7,9 @@ module Mechanics
     def self.priority
       2
     end
+    private
     def degrade
       self.quality += self.sell_in < 0 ? 2 : 1
-      self.quality = [self.quality, 50].min
     end
   end
 end

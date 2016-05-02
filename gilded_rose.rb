@@ -8,15 +8,14 @@ class GildedRose
   def initialize(items)
     @items = items
     mechanic_files = Dir.glob(File.join('mechanics', '*'))
-    @mechanics = mechanic_files.map{|m| m.chomp(File.extname(m)).camelize.constantize}.sort_by(&:priority)
+    mechanics = mechanic_files.map{|m| m.chomp(File.extname(m)).camelize.constantize}.sort_by(&:priority)
+    @items.each do |item|
+      mechanics.each{|m| item.extend(m) if m.matches?(item)}
+    end
   end
 
-  def update_quality()
-    @items.each do |item|
-      @mechanics.each{|m| item.extend(m) if m.matches?(item)}
-      item.age
-      item.degrade
-    end
+  def update_quality
+    @items.each(&:update)
   end
 end
 

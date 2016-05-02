@@ -6,6 +6,7 @@ module Mechanics
     def self.matches?(item)
       item.name == "Backstage passes to a TAFKAL80ETC concert"
     end
+    private
     def degrade
       case
       when self.sell_in < 0
@@ -17,7 +18,6 @@ module Mechanics
       else
         self.quality += 1
       end
-      self.quality = [self.quality, 50].min
     end
   end
 end
